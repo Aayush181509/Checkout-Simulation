@@ -1,6 +1,8 @@
 import queue
 import time
 import random
+from Customers import Customers
+
 
 lanes=[f'L{i}' for i in range(1,7)]
 type=['Reg','Slf']
@@ -17,20 +19,11 @@ class CheckoutLane:
     def is_full(self):
         return self.queue.full()
 
-    def change_is_open(self):
+    def change_lane_status(self):
         self.is_open = not self.is_open
 
     def assign_customer(self,customer):
-        if self.type=='Reg':
-            self.burst_time = customer.get_no_items()*(4//3)
-        else:
-            self.burst_time = customer.get_no_items()*(6//3)
         self.queue.put(customer)
-
-    
-    def get_burst_time(self):
-        print(self.burst_time)
-        return self.burst_time
 
     def is_empty(self):
         return self.queue.empty()
@@ -79,5 +72,15 @@ class CheckoutLane:
     def display_queue_details(self):
         for customer in list(self.queue.queue):
             print(customer,'\n')
+
+
+    def get_total_time(self):
+        print(list(self.queue.queue))
+
+
+c = CheckoutLane(3,5,True,False)    
+c.assign_customer(Customers(3,17))
+c.get_total_time()
+
 
 
