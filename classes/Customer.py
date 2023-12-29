@@ -6,7 +6,7 @@ class Customer:
     def __init__(self,c_id,items_in_basket) -> None:
         self.c_id = c_id
         self.items_in_basket = items_in_basket
-
+        
 
     def lucky_draw(self):
         
