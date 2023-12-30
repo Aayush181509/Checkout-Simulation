@@ -28,13 +28,20 @@ class SaveTable:
             if i==0:
                 pass
             else:
-                self.table.add_row(row)
+                if len(row)!=5:
+                    pass
+                else:
+                    self.table.add_row(row)
         # Add new values to the table
         for i in customers:
             id, no_items,e_time,entry = i
             entry = entry.strftime("%Y-%m-%d %H:%M:%S")
             # entry = (date-entry).total_seconds()
-            self.table.add_row([l_id,f"C{id}", no_items, f"{e_time}secs", entry])
+            try:
+                self.table.add_row([l_id,f"C{id}", no_items, f"{e_time}secs", entry])
+            except:
+                print("hello")
+                
 
         # Save the updated table back to the file
         self.save_table_to_file(self.table, filename)

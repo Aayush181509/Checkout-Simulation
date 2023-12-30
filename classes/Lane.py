@@ -21,40 +21,74 @@ class Lane:
 
 
     def open_lane(self):
-        self.is_open = True
+        try:
+            self.is_open = True
+            return True
+        except:
+            return False
 
     def close_lane(self):
-        if self.queue.empty():
-            self.is_open = False
+        if self.is_open:
+            if self.queue.empty():
+                self.is_open = False
+                return True
+            else:
+                return False
+        else:
+            return "closed"
+            
 
     def add_customer(self,customer):
         if self.is_open:
             if not self.queue.full():
                 if not self.is_self_service:
                     self.queue.put((customer.c_id,customer.items_in_basket,
-                                    customer.get_burst_time('reg'),datetime.now()))
+                                    customer.get_burst_time('reg'),datetime.now()),block=False)
                 else:
                     self.queue.put((customer.c_id,customer.items_in_basket,
-                                    customer.get_burst_time('self'),datetime.now()))
+                                    customer.get_burst_time('self'),datetime.now()),block=False)
+                return True
+                    
+            else:
+                return "full"
+        else:
+            return "closed"
                     
     def remove_customer(self):
         if self.is_open:
             if not self.queue.empty():
                 return self.queue.get()
+            else: 
+                return None
+            
+        else:
+            return None
             
     def empty_lane(self):
-        while not self.queue.empty():
-            self.queue.get()
+        try:
+            while not self.queue.empty():
+                self.queue.get()
+            return True
+        except:
+            return False
 
     def move_customer(self):
         if self.is_open:
             if not self.queue.empty():
                 return self.queue.queue.pop()
+            else:
+                return None
+        else:
+            return None
 
     def get_total_time(self):
         if self.is_open:
             if not self.queue.empty():
                 return sum([i[2] for i in list(self.queue.queue)])
+            else:
+                return 0
+        else: 
+            return 0
 
     def process_customer(self):
         pass
@@ -66,18 +100,22 @@ class Lane:
         pass
 
     def display_details(self):
-        customers = list(self.queue.queue)
-        # SaveTable().append_to_table('tableinfo.csv',self.id,datetime.now(),customers)
-        table = PrettyTable()
-        with open('processed_customers.csv','r') as file:
-            reader = csv.reader(file)
+        try:
+            customers = list(self.queue.queue)
+            # SaveTable().append_to_table('tableinfo.csv',self.id,datetime.now(),customers)
+            table = PrettyTable()
+            with open('processed_customers.csv','r') as file:
+                reader = csv.reader(file)
 
-            header = next(reader)
-            table.field_names = header
-            for row in reader:
-                table.add_row(row)
+                header = next(reader)
+                table.field_names = header
+                for row in reader:
+                    table.add_row(row)
 
-        return table
+            return table
+        
+        except:
+            return None
         
 
     
