@@ -39,7 +39,7 @@ class RegularLane(Lane):
         if self.is_open:
             return f"{self.id} (Reg)-> {'* ' *self.get_current_length()} Estimated Time: {self.get_total_time()}"
         else:
-            return f"{self.id}(Ref)-> closed"
+            return f"{self.id} (Reg)-> closed"
 
         
     def stop_processing(self):

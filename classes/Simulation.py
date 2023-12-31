@@ -9,8 +9,10 @@ class Simulation:
     def __init__(self) -> None:
         self.regular_lanes = [RegularLane(i,False) for i in range(1,6)]
         self.selfservice_lane = SelfServiceLane()
-        self.open_lane = [self.regular_lanes[0],self.selfservice_lane]
-        self.count = 0
+        self.lanes = self.regular_lanes+[self.selfservice_lane]
+        
+        # self.open_lane = [self.regular_lanes[0],self.selfservice_lane]
+        # self.count = 0
 
     def open_new_lane(self):
         if len(self.open_lane)<6:
@@ -26,29 +28,21 @@ class Simulation:
 
 
     def add_customer_to_lane(self,customer):
-
         selected_lane = min(self.open_lane,key=lambda lane: lane.get_total_time())
-        if selected_lane.open_lane():
-            if selected_lane.queue.full():
-                for i in self.open_lane:
-                    if i!=selected_lane and not i.queue.full():
-                        selected_lane = i
-                        break
+        if selected_lane.queue.full():
+            for i in self.open_lane:
+                if i!=selected_lane and not i.queue.full():
+                    selected_lane = i
+                else:
+                    if not self.open_new_lane():
+                        print("Sorry")
                     else:
-                        if not self.open_new_lane():
-                            pass
-                        else:
-                            selected_lane = self.open_new_lane()
-                
-            else:
-                pass
-
-            # print(selected_lane.display_lane())
-            # print(selected_lane.id)
-            selected_lane.add_customer(customer)
-            self.count+=1
-            self.display_lane_info()
-            # print(selected_lane.display_lane())
+                        selected_lane = self.open_new_lane()
+        print(selected_lane.id)
+        selected_lane.open_lane()
+        selected_lane.add_customer(customer)
+        self.count+=1
+        self.display_lane_info()
 
     def display_lane_info(self):
         print(f"""
@@ -58,11 +52,13 @@ Total Number of customers waiting to checkout at {datetime.now()} is {self.count
         for i in self.regular_lanes:
             print(i.display_lane())
         print(self.selfservice_lane.display_lane())
+
+
 s = Simulation()
 
-for i in range(41):
-    c = Customer(i,random.randint(1,28))
-    s.add_customer_to_lane(c)
+# for i in range(20):
+#     c = Customer(i,random.randint(1,28))
+#     s.add_customer_to_lane(c)
 # lane = RegularLane(3,True)              
 # for i in range(15):
 #     customer = Customer(i,random.randint(1,30))
