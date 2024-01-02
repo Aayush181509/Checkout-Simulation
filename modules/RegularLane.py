@@ -1,14 +1,14 @@
-from Lane import Lane
+from modules.Lane import Lane
 import time
 from datetime import datetime
-from SaveTable import SaveTable
-from Customer import Customer
+from modules.SaveTable import SaveTable
+from modules.Customer import Customer
 import threading
 import random
 
 class RegularLane(Lane):
-    def __init__(self, l_id, is_open) -> None:
-        super().__init__(l_id, False, is_open, 5, 3)
+    def __init__(self, l_id) -> None:
+        super().__init__(l_id, False, False, 5, 3)
         self.tills = [threading.Thread(target=self.process_customer,args = (i,)) for i in range(self.max_tills)]
     
     def process_customer(self,till_id):

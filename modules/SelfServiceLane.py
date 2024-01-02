@@ -1,9 +1,9 @@
-from Lane import Lane
+from modules.Lane import Lane
 import threading
 import time
-from SaveTable import SaveTable
+from modules.SaveTable import SaveTable
 from datetime import datetime
-from Customer import Customer
+from modules.Customer import Customer
 import random
 
 

@@ -1,9 +1,9 @@
 from datetime import datetime
 import queue
-from Customer import Customer
+from modules.Customer import Customer
 import time
 from prettytable import PrettyTable
-from SaveTable import SaveTable
+from modules.SaveTable import SaveTable
 import csv
 
 lanes = [f'L{i}' for i in range(1,7)]
@@ -23,9 +23,9 @@ class Lane:
     def open_lane(self):
         try:
             self.is_open = True
-            return True
-        except:
-            return False
+            print(self.id," Opened")
+        except Exception as e:
+            print(e)
 
     def close_lane(self):
         if self.is_open:
