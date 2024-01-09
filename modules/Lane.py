@@ -23,9 +23,10 @@ class Lane:
     def open_lane(self):
         try:
             self.is_open = True
-            print(self.id," Opened")
+            # print(self.id," Opened")
         except Exception as e:
             print(e)
+            
 
     def close_lane(self):
         if self.is_open:

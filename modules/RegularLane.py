@@ -6,33 +6,32 @@ from modules.Customer import Customer
 import threading
 import random
 
+
 class RegularLane(Lane):
     def __init__(self, l_id) -> None:
-        super().__init__(l_id, False, False, 5, 3)
-        self.tills = [threading.Thread(target=self.process_customer,args = (i,)) for i in range(self.max_tills)]
+        super().__init__(l_id, False, False, 5, 1)
+        
     
-    def process_customer(self,till_id):
+    def process_customer(self):
+        # print(customer_queue)
+        # while not customer_queue.empty():
         if self.is_open:
-            while not self.queue.empty():
-                with open('processed_customers.txt','w') as file:
-                    customer = self.queue.get()
-                    time.sleep(customer[2]/50)
-                    print(f'Processing for Customer:{customer[0]} in Till{till_id} Number of Items: {customer[1]} Time Required: {customer[2]}')
-                    # print(f'Processing for Customer:{customer[0]}Number of Items: {customer[1]} Time Required: {customer[2]}')
-                    SaveTable().append_to_table('processed_customers.csv',self.id,datetime.now(),[customer])
-                    # print(self.display_lane())
-                        #file.write(f'''
-                        # ### Regular Lane ####                               
-                        # In Lane: {self.id}
-                        # Customer ID: C{customer[0]}
-                        # Number of Items in Basket: {customer[1]}
-                        # Estimated Time: {customer[2]}
-                        # Taken Time: {datetime.now() - customer[3]} secs
-                        # ''')
+            if not self.queue.empty():
+                customer = self.queue.get()
+                print(f'{self.id}: Processing for Customer:{customer[0]} Number of Items: {customer[1]} Time Required: {customer[2]}')
+                time.sleep(customer[2]/50)
+            else:
+                # if customer_queue.empty():
+                self.close_lane()
+                # else:
+                #     self.add_customer(customer_queue.get())
+        else:
+            if not self.queue.empty():
+                self.open_lane()
 
-    def start_processing(self):
-        for thread in self.tills:
-            thread.start()
+    # def start_processing(self):
+    #     for thread in self.tills:
+    #         thread.start()
             
     
     def display_lane(self):
@@ -42,11 +41,11 @@ class RegularLane(Lane):
             return f"{self.id} (Reg)-> closed"
 
         
-    def stop_processing(self):
-        self.is_open = False
-        for thread in self.tills:
+    # def stop_processing(self):
+    #     self.is_open = False
+    #     for thread in self.tills:
             
-            thread.join()
+    #         thread.join()
 
 
 

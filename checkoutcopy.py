@@ -13,15 +13,8 @@ class CheckoutSystem:
         self.selfservice_lane = SelfServiceLane()
         self.lanes = self.regular_lanes+[self.selfservice_lane]
         self.regular_lanes[0].open_lane()
-        self.regular_lanes[1].open_lane()
-        self.regular_lanes[2].open_lane()
-        self.regular_lanes[3].open_lane()
-        self.regular_lanes[4].open_lane()
         # self.open_lane(self.selfservice_lane)
-        self.regular_lanes[4].close_lane()
-        # self.open_lanes = [self.regular_lanes[0],self.regular_lanes[1],self.selfservice_lane]
-        self.open_lanes = [self.regular_lanes[0],self.regular_lanes[1],self.regular_lanes[2],self.regular_lanes[3],self.regular_lanes[4]]
-        self.open_lanes.remove(self.regular_lanes[4])
+        self.open_lanes = [self.regular_lanes[0],self.selfservice_lane]
         self.count = 0
         self.customer = queue.Queue(100)
 
@@ -34,7 +27,7 @@ class CheckoutSystem:
     def generate_customers(self,num):
         for _ in range(num):
             items_in_basket = random.randint(1,30)
-            c = Customer(random.randint(1,100),items_in_basket)
+            c = Customer(random.randint(1,100),random.randint(1,30))
             self.customer.put(c)
 
     def get_customers(self):
@@ -63,7 +56,6 @@ class CheckoutSystem:
                 return lane
             else:
                 print("Sorry Max Capacity!!! Please Wait")
-                return
 
     
 
@@ -88,10 +80,10 @@ class CheckoutSystem:
             while not self.customer.empty():
                 customer = self.get_customers()
                 lane = self.get_lane()
-                # self.count+=1
+                self.count+=1
                 lane.add_customer(customer)
                 self.display_lane_info()
-                # time.sleep(2)
+                time.sleep(2)
         except Exception as e:
             print(e)
 
@@ -102,72 +94,32 @@ class CheckoutSystem:
         # lane.stop_processing()
 
     def regularlane_process_customer(self,lane):
-        # while not self.customer.empty():
-        while not self.customer.empty():
-            # print(self.customer.get())
-            for i in range(10):
-                if not self.customer.empty():
-                    self.count+=1
-                    # alane = self.get_lane()
-                    lane.add_customer(self.customer.get())
-                    # lane.process_customer()
-                    # self.count-=1
-                    # lane.add_customer(self.customer.get())                    
-                    
-                else:
-                    # self.generate_customers(random.randint(5,10))
-                    pass
-            self.display_lane_info()
-            for i in range(10):
-                lane.process_customer()
-                self.count-=1
-
-            self.display_lane_info()
-            time.sleep(2)
-
-    def customer_simulation(self):
-        while True:
-            self.generate_customers(12)
-            for i in range(10):
-                lane=self.get_lane()
-                if lane is not None:
-                    if not self.customer.empty():
-                        lane.add_customer(self.customer.get())
-            time.sleep(5)
-
-            # lane.process_customer()
-            # self.count-=1
-            
-        # if not lane.queue.full():
-        #     print(lane.id,"Not Full")
-        #     lane.process_customer(self.customer)
-        #     if self.get_customers() is not None:
-        #         print(self.get_customers())
-        #         lane.add_customer(self.get_customers())
+        lane.start_processing()
+        if not lane.queue.full():
+            print("HELLOOOOOOOOO")
+            if self.get_customers() is not None:
+                lane.add_customer(self.get_customers())
         # print(lane.id,lane.is_open)
 
     def simulate(self):
-        # threads = [threading.Thread(target=self.regularlane_process_customer,args=(lane,)) for lane in self.open_lanes if lane!=self.selfservice_lane]
-        customer_thread = [threading.Thread(target=self.customer_simulation) for i in range(4)]
-        # threads.append(threading.Thread(target=self.selflane_process_customer))
+        threads = [threading.Thread(target=self.regularlane_process_customer,args=(lane,)) for lane in self.open_lanes if lane!=self.selfservice_lane]
+        threads.append(threading.Thread(target=self.selflane_process_customer))
         # print(threads)
-        for t in customer_thread:
-            t.start()
-        # for thread in threads:
-        #     thread.start()
+        for thread in threads:
+            thread.start()
 
-        # for thread in threads:
-        #     thread.join()
+        for thread in threads:
+            thread.join()
 
     def simulation(self):
-        self.display_lane_info()
-        self.generate_customers(50)
-        # threading.Thread(target=self.add_customer()).start()
-        # self.add_customer()
-        # self.process_customer()
-        self.simulate()
-        # time.sleep(10)
-        self.display_lane_info()
+        while True:
+            self.generate_customers(random.randint(10,40))
+            threading.Thread(target=self.add_customer()).start()
+            # self.add_customer()
+            # self.process_customer()
+            self.simulate()
+            time.sleep(10)
+            self.display_lane_info()
         
 
 
