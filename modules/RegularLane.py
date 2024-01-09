@@ -22,12 +22,14 @@ class RegularLane(Lane):
                 time.sleep(customer[2]/50)
             else:
                 # if customer_queue.empty():
-                self.close_lane()
+                # self.close_lane()
+                pass
                 # else:
                 #     self.add_customer(customer_queue.get())
         else:
-            if not self.queue.empty():
-                self.open_lane()
+            # if not self.queue.empty():
+            #     self.open_lane()
+            pass
 
     # def start_processing(self):
     #     for thread in self.tills:
