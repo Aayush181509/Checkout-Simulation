@@ -6,6 +6,7 @@ from modules.Customer import Customer
 from datetime import datetime
 import queue
 import time
+import sys
 
 class CheckoutSystem:
     def __init__(self) -> None:
@@ -24,6 +25,7 @@ class CheckoutSystem:
         # self.open_lanes.remove(self.regular_lanes[4])
         self.count = 0
         self.customer = queue.Queue(100)
+        self.customer_no=0
 
     def is_max_capacity(self):
         for i in self.open_lanes:
@@ -34,7 +36,8 @@ class CheckoutSystem:
     def generate_customers(self,num):
         for _ in range(num):
             items_in_basket = random.randint(1,30)
-            c = Customer(random.randint(1,100),items_in_basket)
+            c = Customer(self.customer_no,items_in_basket)
+            self.customer_no+=1
             self.customer.put(c)
 
     def get_customers(self):
@@ -106,40 +109,43 @@ class CheckoutSystem:
                 if not lane.queue.empty():
                     lane.process_customer()
                 else:
-                    time.sleep(5)
+                    lane.close_lane()
+                    self.open_lanes.remove(lane)
+                    time.sleep(2)
             else:
-                time.sleep(5)
+                # self.display_lane_info()
+                time.sleep(2)
+
+            
 
 
     def customer_simulation(self):
         while True:
             count=0
-            self.generate_customers(25)
+            self.generate_customers(random.randint(1,20))
             while not self.customer.empty():
                 lane=self.get_lane()
                 if lane is not None:
                     self.count+=1
-                    lane.add_customer(self.customer.get())
+                    customer = self.customer.get()
+                    # print(f"{lane.id}: Added C{customer.c_id} with {customer.items_in_basket}Items")
+                    lane.add_customer(customer)
+                    
                 else:
-                    time.sleep(3)
+                    # time.sleep(3)
                     break
+            # self.display_lane_info()
+            time.sleep(10)
+
+    def simulate_lane_display(self):
+        while True:
             self.display_lane_info()
             time.sleep(5)
-
-            # lane.process_customer()
-            # self.count-=1
-            
-        # if not lane.queue.full():
-        #     print(lane.id,"Not Full")
-        #     lane.process_customer(self.customer)
-        #     if self.get_customers() is not None:
-        #         print(self.get_customers())
-        #         lane.add_customer(self.get_customers())
-        # print(lane.id,lane.is_open)
 
     def simulate(self):
         threads = [threading.Thread(target=self.regularlane_process_customer,args=(lane,)) for lane in self.regular_lanes if lane!=self.selfservice_lane]
         threading.Thread(target=self.customer_simulation).start()
+        threading.Thread(target=self.simulate_lane_display).start()
         # threads.append(threading.Thread(target=self.selflane_process_customer))
         # print(threads)
         for thread in threads:
@@ -172,6 +178,10 @@ Total Number of customers waiting to checkout at {datetime.now()} is {self.count
 
    
     
+# with open('output.txt',"w") as output_file:
+#     sys.stdout = output_file
+
+
 s = CheckoutSystem()
 s.simulation()
 # s.generate_customers(45)
