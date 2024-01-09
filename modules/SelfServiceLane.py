@@ -13,29 +13,18 @@ class SelfServiceLane(Lane):
         self.tills = [threading.Thread(target=self.process_customer,args = (i,)) for i in range(self.max_tills)]
 
     def process_customer(self,till_id):
-        if self.is_open:
-            with open('processed_customers.txt','w') as file:
-                while not self.queue.empty():
-                    customer = self.queue.get()
-                    
-                    # SaveTable().append_to_table('processed_customers.csv',self.id,datetime.now(),[customer])
-                    print(f'{self.id} Processing for Customer:{customer[0]} in Till{till_id} Number of Items: {customer[1]} Time Required: {customer[2]}')
-                    time.sleep(customer[2]/20)
-                    # print(customer)
-                    # print(self.id,customer)
-                    # print(self.display_lane())
-                    #                     file.write(f'''
-                    # ### Self Service Lane ####                                
-                    # In Lane: {self.id}
-                    # Customer ID: C{customer[0]}
-                    # Number of Items in Basket: {customer[1]}
-                    # Estimated Time: {customer[2]}
-                    # Taken Time: {int(datetime.now() - customer[3])} secs
-                    # ''')
+        # if self.is_open:
+            # while not self.queue.empty():
+        if not self.queue.empty():
+            customer = self.queue.get()
+            print(f'{self.id} Processing for Customer:{customer[0]} in Till{till_id} Number of Items: {customer[1]} Time Required: {customer[2]}')
+            time.sleep(customer[2]/50)
+        else:
+            pass
 
-    def start_processing(self):
-        for thread in self.tills:
-            thread.start()
+    # def start_processing(self):
+    #     for thread in self.tills:
+    #         thread.start()
 
 
     def display_lane(self):
@@ -44,10 +33,10 @@ class SelfServiceLane(Lane):
         else:
             return f"{self.id}(Slf)-> closed"
         
-    def stop_processing(self):
-        self.is_open = False
-        for thread in self.tills:
-            thread.join()
+    # def stop_processing(self):
+    #     self.is_open = False
+    #     for thread in self.tills:
+    #         thread.join()
 
 
 

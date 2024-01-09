@@ -20,7 +20,7 @@ class CheckoutSystem:
         # self.regular_lanes[4].open_lane()
         # self.open_lane(self.selfservice_lane)
         # self.regular_lanes[4].close_lane()
-        self.open_lanes = [self.regular_lanes[0]]
+        self.open_lanes = [self.regular_lanes[0],self.selfservice_lane]
         # self.open_lanes = [self.regular_lanes[0],self.regular_lanes[1],self.regular_lanes[2],self.regular_lanes[3],self.regular_lanes[4]]
         # self.open_lanes.remove(self.regular_lanes[4])
         self.count = 0
@@ -97,16 +97,27 @@ class CheckoutSystem:
         except Exception as e:
             print(e)
 
-    def selflane_process_customer(self):
+    # def selflane_process_customer(self):
+    #     lane = self.selfservice_lane
+    #     lane.start_processing()
+    #     print(lane.id,lane.is_open)
+    #     # lane.stop_processing()
+
+    def selflane_process_customer(self,till_id):
         lane = self.selfservice_lane
-        lane.start_processing()
-        print(lane.id,lane.is_open)
-        # lane.stop_processing()
+        while True:
+            if not lane.queue.empty():
+                self.count-=1
+                lane.process_customer(till_id)
+            else:
+                # lane.close_lane()
+                time.sleep(2)
 
     def regularlane_process_customer(self,lane):
         while True:
             if lane.is_open:
                 if not lane.queue.empty():
+                    self.count-=1
                     lane.process_customer()
                 else:
                     lane.close_lane()
@@ -122,7 +133,7 @@ class CheckoutSystem:
     def customer_simulation(self):
         while True:
             count=0
-            self.generate_customers(random.randint(1,20))
+            self.generate_customers(random.randint(30,40))
             while not self.customer.empty():
                 lane=self.get_lane()
                 if lane is not None:
@@ -130,7 +141,6 @@ class CheckoutSystem:
                     customer = self.customer.get()
                     # print(f"{lane.id}: Added C{customer.c_id} with {customer.items_in_basket}Items")
                     lane.add_customer(customer)
-                    
                 else:
                     # time.sleep(3)
                     break
@@ -146,11 +156,14 @@ class CheckoutSystem:
         threads = [threading.Thread(target=self.regularlane_process_customer,args=(lane,)) for lane in self.regular_lanes if lane!=self.selfservice_lane]
         threading.Thread(target=self.customer_simulation).start()
         threading.Thread(target=self.simulate_lane_display).start()
-        # threads.append(threading.Thread(target=self.selflane_process_customer))
+        selfServiceTills = [threading.Thread(target=self.selflane_process_customer,args = (i,)) for i in range(8)]
+
         # print(threads)
         for thread in threads:
             thread.start()
-
+        
+        for tillsthread in selfServiceTills:
+            tillsthread.start()
         # for thread in threads:
         #     thread.join()
 
