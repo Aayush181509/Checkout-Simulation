@@ -17,7 +17,7 @@ class SelfServiceLane(Lane):
             # while not self.queue.empty():
         if not self.queue.empty():
             customer = self.queue.get()
-            print(f'{self.id} Processing for Customer:{customer[0]} in Till{till_id} Number of Items: {customer[1]} Time Required: {customer[2]}')
+            # print(f'{self.id} Processing for Customer:{customer[0]} in Till{till_id} Number of Items: {customer[1]} Time Required: {customer[2]}')
             time.sleep(customer[2]/50)
         else:
             pass
