@@ -24,7 +24,7 @@ class CheckoutSystem:
         # self.open_lanes = [self.regular_lanes[0],self.regular_lanes[1],self.regular_lanes[2],self.regular_lanes[3],self.regular_lanes[4]]
         # self.open_lanes.remove(self.regular_lanes[4])
         self.count = 0
-        self.customer = queue.Queue(100)
+        self.customer = queue.Queue(1000)
         self.customer_no=0
 
     def is_max_capacity(self):
@@ -127,8 +127,6 @@ class CheckoutSystem:
                 # self.display_lane_info()
                 time.sleep(2)
 
-            
-
 
     def customer_simulation(self):
         while True:
@@ -168,16 +166,7 @@ class CheckoutSystem:
         #     thread.join()
 
     def simulation(self):
-        self.display_lane_info()
-        # self.generate_customers(50)
-        # threading.Thread(target=self.add_customer()).start()
-        # self.add_customer()
-        # self.process_customer()
         self.simulate()
-        # time.sleep(10)
-        # self.display_lane_info()
-        
-
 
     def display_lane_info(self):
         print(f"""
@@ -190,21 +179,7 @@ Total Number of customers waiting to checkout at {datetime.now()} is {self.count
 
 
    
-    
-# with open('output.txt',"w") as output_file:
-#     sys.stdout = output_file
 
-
-s = CheckoutSystem()
-s.simulation()
-# s.generate_customers(45)
-# s.display_lane_info()
-# print(s.is_max_capacity())
-# s.add_customer()
-# s.display_lane_info()
-# # s.process_customer()
-# s.simulate()
-# s.display_lane_info()
 
 
 
